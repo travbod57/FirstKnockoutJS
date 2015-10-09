@@ -1,0 +1,67 @@
+﻿@{
+    ViewBag.Title = "Test";
+}
+
+<h2>Test</h2>
+
+<script type="text/javascript">
+
+    var Item = function (data) {
+
+        this.Name = ko.observable();
+        this.Age = ko.observable();
+
+        this.update(data);
+        
+    }
+
+    Item.prototype.update = function (data) {
+        this.Name(data.Name);
+        this.Age(data.Age);
+    };
+
+    var ContactViewModel = function (data) {
+
+        var self = this;
+
+        this.SavedItem = ko.observable(new Item({ Name: "Alex", Age: 29 }));
+        this.EditItem = ko.observable(new Item({ Name: "Alex", Age: 29 }));
+        this.itemInContext = ko.observable(this.SavedItem);
+
+        this.Cancel = function () {
+            this.EditItem = null;
+            this.itemInContext = this.SavedItem;
+        }
+
+        this.Edit = function () {
+
+            var i = ko.toJS(this.SavedItem);
+            this.EditItem().update(i);
+            this.itemInContext = this.EditItem;
+            //alert(this.EditItem.Name());
+        }
+
+        this.Save = function () {
+            this.SavedItem().update(ko.toJS(this.itemInContext));
+            this.itemInContext = this.SavedItem;
+            //alert(this.SavedItem.Name());
+        }
+    }
+
+    var contactViewModel = new ContactViewModel();
+
+    $(document).ready(function () {
+
+        ko.applyBindings(contactViewModel);
+
+    });
+
+</script>
+
+
+    <div data-bind="with: itemInContext">
+        <input data-bind="value: Name" /><br />
+        <input data-bind="value: Age" /><br />
+    </div>
+
+    <button id="saveBtn" type="button" data-bind="click: Save">Save</button><button id="editBtn" type="button" data-bind="click: Edit">Edit</button><button id="cancelBtn" type="button" data-bind="click: Cancel">Cancel</button>

@@ -1,0 +1,51 @@
+﻿@model FirstKnockoutJS.Controllers.ClaimDetailsDto
+@using System.Web.Script.Serialization;
+
+@{
+    ViewBag.Title = "KeepUpdatingBindings";
+}
+
+<h2>KeepUpdatingBindings</h2>
+
+@{ var defaultData = new JavaScriptSerializer().Serialize(Model); }
+
+<button id="btn">click me</button>
+    <div>
+
+        <h3>Claim Details</h3>
+
+        <span data-bind="text: Client"></span><br />
+        <span data-bind="text: Insured"></span><br />
+        <span id="date" data-bind="date: TheDate"></span>
+    </div>
+   
+    <script>
+
+        var ClaimDetailsVM = function (data) {
+
+            ko.mapping.fromJS(data, {}, this);
+        }
+
+        var claimsDetailsVM = new ClaimDetailsVM(@Html.Raw(defaultData));
+
+        $(document).ready(function () {
+
+            ko.applyBindings(claimsDetailsVM);
+
+            $("#btn").click(function () {
+
+                $.ajax({
+                    url: '/Home/GetClaimDetails/' + 'fileId=' + 1,
+                    method: "GET"
+                })
+                .done(function (data) {
+
+
+                    ko.mapping.fromJS(data, {}, claimsDetailsVM);
+                     
+                });
+
+            });
+        });
+       
+</script>

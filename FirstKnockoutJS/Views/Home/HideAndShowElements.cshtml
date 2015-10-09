@@ -1,0 +1,43 @@
+﻿@{
+    ViewBag.Title = "Hide and Show elements";
+}
+
+<h2>Test</h2>
+
+<script type="text/javascript">
+
+    var ContactViewModel = function () {
+        this.Name = ko.observable("Alex");
+        this.Age = ko.observable(29);
+        this.SelectedSalutation = ko.observable("Mr");
+
+        this.ShowTextBox = ko.computed(function () {
+
+            return this.Age() > 10;
+        }, this);
+
+        this.Salutations = [
+                { Name: "Mr", Id: 1 },
+                { Name: "Mrs", Id: 2 },
+                { Name: "Miss", Id: 3 }
+            ];
+
+    }
+
+    var contactViewModel = new ContactViewModel();
+
+    $(document).ready(function () {
+
+        ko.applyBindings(contactViewModel);
+
+    });
+
+</script>
+
+
+    <div>
+        <select data-bind="options: Salutations, value: SelectedSalutation, optionsText: 'Name', valueAllowUnset: true"></select>
+        <input data-bind="value: Name" /><br />
+        <input data-bind="value: Age" /><br />
+        <input data-bind="visible: ShowTextBox" /><br />
+    </div>

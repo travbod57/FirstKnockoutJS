@@ -1,0 +1,54 @@
+﻿@model FirstKnockoutJS.Models.Contact
+@using System.Web.Script.Serialization;
+
+@{
+    ViewBag.Title = "DynamicTemplateSwitch";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>DynamicTemplateSwitch</h2>
+
+@{ var data = new JavaScriptSerializer().Serialize(Model); }
+
+<script type="text/javascript">
+
+    var ContactViewModel = function (data) {
+
+        var self = this;
+
+        this.LoadData = function () {
+
+            ko.mapping.fromJS(data, {}, self);
+        }
+        this.selectedView = ko.observable("readOnly");
+
+        this.SwitchTemplate = function () {
+
+            if (this.selectedView() == "edit")
+                this.selectedView("readOnly");
+            else
+                this.selectedView("edit");
+        }
+        this.Cancel = function() {
+
+            this.SwitchTemplate();
+            this.LoadData();
+        }
+
+        this.LoadData();
+    }
+
+    var contactViewModel = new ContactViewModel(@Html.Raw(data));
+
+    $(document).ready(function () {
+
+        ko.applyBindings(contactViewModel);
+
+    });
+
+</script>
+
+<div data-bind="template: { name: selectedView }"></div>
+
+@Html.Partial("~/Views/Home/Templates/Edit.cshtml")
+@Html.Partial("~/Views/Home/Templates/ReadOnly.cshtml")
